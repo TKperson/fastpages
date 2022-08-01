@@ -1,11 +1,10 @@
-# "Windows 10 installation speedrun guide with OOBE skip"
-> "took me hours to write this"
-
-- toc:true- branch: master
-- badges: true
-- comments: true
-- author: Hamel Husain & Jeremy Howard
-- categories: [fastpages, jupyter]
+---
+toc: true
+layout: post
+description: took me hours to write this
+categories: [markdown, win10]
+title: Windows 10 installation speedrun guide with OOBE skip
+---
 
 ## Windows 10 installation speedrun 
 
