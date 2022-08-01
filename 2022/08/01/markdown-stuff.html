@@ -1,0 +1,95 @@
+<h1 id="windows-10-installation-speedrun-guide-with-oobe-skip">“Windows 10 installation speedrun guide with OOBE skip”</h1>
+<blockquote>
+  <p>“took me hours to write this”</p>
+</blockquote>
+
+<ul>
+  <li>toc:true- branch: master</li>
+  <li>badges: true</li>
+  <li>comments: true</li>
+  <li>author: Hamel Husain &amp; Jeremy Howard</li>
+  <li>categories: [fastpages, jupyter]</li>
+</ul>
+
+<h2 id="windows-10-installation-speedrun">Windows 10 installation speedrun</h2>
+
+<p>“No gpt covertion” because I don’t think virtualbox supports gpt installation of windows 10</p>
+
+<p>Open cmd.exe in installation mode: <kbd>Shift</kbd> + <kbd>F10</kbd></p>
+
+<h3 id="create-partition-and-drives-with-diskpartexe--diskpart">create partition and drives with Diskpart.exe | <code class="language-plaintext highlighter-rouge">diskpart</code></h3>
+
+<div class="language-batch highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">sel</span> <span class="kd">disk</span> <span class="m">0</span>
+<span class="kd">create</span> <span class="kd">part</span> <span class="kd">primary</span> <span class="kd">size</span><span class="o">=</span><span class="m">500</span>
+<span class="nb">format</span> <span class="kd">fs</span><span class="o">=</span><span class="kd">fat32</span> <span class="kd">quick</span>
+<span class="kd">assign</span> <span class="kd">letter</span> <span class="kd">w</span>
+
+<span class="kd">create</span> <span class="kd">part</span> <span class="kd">primary</span>
+<span class="nb">format</span> <span class="kd">fs</span><span class="o">=</span><span class="kd">ntfs</span> <span class="kd">quick</span>
+<span class="kd">assign</span> <span class="kd">letter</span> <span class="kd">c</span>
+</code></pre></div></div>
+
+<p>Shorter form:</p>
+<div class="language-batch highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">sel</span> <span class="kd">disk</span> <span class="m">0</span>
+<span class="kd">cre</span> <span class="kd">par</span> <span class="kd">pri</span> <span class="kd">size</span><span class="o">=</span><span class="m">500</span>
+<span class="k">for</span> <span class="kd">fs</span><span class="o">=</span><span class="kd">fat32</span> <span class="kd">quick</span>
+<span class="kd">ass</span> <span class="kd">let</span> <span class="kd">c</span>
+
+<span class="kd">cre</span> <span class="kd">par</span>
+<span class="k">for</span> <span class="kd">quick</span>
+<span class="kd">ass</span> <span class="kd">let</span> <span class="kd">w</span>
+</code></pre></div></div>
+
+<h3 id="apply-installesd-to-c-dirve-using-dismexe--dism">apply install.esd to C dirve using dism.exe | <code class="language-plaintext highlighter-rouge">dism</code></h3>
+
+<p><code class="language-plaintext highlighter-rouge">cd /d d:\sources</code></p>
+
+<p>Note: make sure <code class="language-plaintext highlighter-rouge">d:\sources</code> contains install.esd or install.wim</p>
+
+<div class="language-batch highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">dism</span> <span class="na">/apply-image /imagefile</span><span class="nl">:install</span>.esd <span class="na">/index</span>:1 <span class="na">/applydir</span><span class="nl">:C</span>:\
+</code></pre></div></div>
+
+<h3 id="oobe-setup-skip">OOBE setup skip</h3>
+
+<p>After dism finished extracting registry keys in <code class="language-plaintext highlighter-rouge">C:\Windows\system32\config</code>:</p>
+
+<p>Open registry with cmd <code class="language-plaintext highlighter-rouge">regedit.exe</code> or <code class="language-plaintext highlighter-rouge">regedit</code></p>
+
+<p>Click on <code class="language-plaintext highlighter-rouge">HKEY_LOCAL_MACHINE</code> key and go to the menu bar and select file &gt; Load Hive</p>
+
+<p>Then select <code class="language-plaintext highlighter-rouge">C:\Windows\system32\config\SYSTEM</code>, click open (loading the keys may take a while)</p>
+
+<p>Name it anything you want, but I will name it <code class="language-plaintext highlighter-rouge">sys</code>.</p>
+
+<p>go to Computer\HKEY_LOCAL_MACHINE\sys\Setup</p>
+
+<p>on the right of the Registry editor: double click on or press enter after selecting <code class="language-plaintext highlighter-rouge">CmdLine</code> in the name column &gt; type in <code class="language-plaintext highlighter-rouge">cmd.exe</code></p>
+
+<p>then select <code class="language-plaintext highlighter-rouge">OOBEInProgress</code> key &gt; enter <code class="language-plaintext highlighter-rouge">0</code></p>
+
+<p>Click on <code class="language-plaintext highlighter-rouge">HKEY_LOCAL_MACHINE</code> key and go to the menu bar and select file &gt; Load Hive</p>
+
+<p>Then select <code class="language-plaintext highlighter-rouge">C:\Windows\system32\config\SOFTWARE</code>, click open (loading the keys may take a while)</p>
+
+<p>Name it anything you want, but I will name it <code class="language-plaintext highlighter-rouge">soft</code>.</p>
+
+<p>go to Computer\HKEY_LOCAL_MACHINE\soft\Microsoft\Windows\CurrentVersion\Policies\System</p>
+
+<p>on the right of the Registry editor, scroll to the bottom, right click to create a new key:</p>
+
+<p>the new key has to be in “DWORD (32-bit) Value” and name the new key to “VerboseStatus”</p>
+
+<p>select “VerboseStatus” change its value to 1</p>
+
+<p>at the top of the same key directory, select <code class="language-plaintext highlighter-rouge">EnableCursorSuppression</code>, change its value to <code class="language-plaintext highlighter-rouge">0</code></p>
+
+<p>Close registry editor</p>
+
+<h3 id="setup-windows-boot-loader-with-bcdbootexe">Setup windows boot loader with <code class="language-plaintext highlighter-rouge">bcdboot.exe</code></h3>
+
+<div class="language-batch highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">bcdboot</span> <span class="kd">c</span>:\windows <span class="na">/s </span><span class="kd">w</span>:
+<span class="nb">wpeutil</span> <span class="kd">reboot</span>
+</code></pre></div></div>
+
+<h3 id="setup-account-and-restore-start-up-settings">Setup account and restore start up settings</h3>
+
