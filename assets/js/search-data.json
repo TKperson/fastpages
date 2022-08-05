@@ -25,7 +25,7 @@
     
         ,"post2": {
             "title": "Java stuff",
-            "content": "System.out.println(&quot;no&quot;); .",
+            "content": "System.out.println(&quot;no&quot;); . no .",
             "url": "https://tkperson.github.io/fastpages/java/2022/07/31/hello_java.html",
             "relUrl": "/java/2022/07/31/hello_java.html",
             "date": " • Jul 31, 2022"
